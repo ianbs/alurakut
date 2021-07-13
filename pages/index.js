@@ -41,7 +41,8 @@ export default function Home() {
 				<ProfileSideBar githubUser={githubUser} />
 				<Box className="welcome" style={{ gridArea: "welcome" }}>
 					<h1 className="title">Bem vindo(a)</h1>
-					<OrkutNostalgicIconSet />
+					<OrkutNostalgicIconSet confiavel={3} legal={2} sexy={1} />
+					{/*Passando PROPS para o component para definir a quantidade*/}
 				</Box>
 				<div className="relations" style={{ gridArea: "relations" }}>
 					<ProfileRelationsBoxWrapper>
