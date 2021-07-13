@@ -2,6 +2,6 @@
 
 ## Imersão React Alura
 
-_Projeto criado durante a imersão react da alura._
+Projeto criado durante a imersão react da alura.
 
 Veja o projeto [clicando aqui](alurakut-ianbs.vercel.app/)
