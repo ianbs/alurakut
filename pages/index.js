@@ -11,7 +11,7 @@ import {
   AlurakutProfileSidebarMenuDefault,
   OrkutNostalgicIconSet,
 } from "../src/lib/AlurakutCommons";
-import router from "next/router";
+import { useRouter } from "next/router";
 
 function ProfileSideBar(propriedades) {
   return (
@@ -41,7 +41,7 @@ export default function Home(props) {
   const [comunidades, setComunidades] = useState([]);
 
   useEffect(() => {
-    fetch("https://api.github.com/users/ianbs/followers")
+    fetch(`https://api.github.com/users/${githubUser}/followers`)
       .then((results) => {
         return results.json();
       })
@@ -58,7 +58,7 @@ export default function Home(props) {
       },
       body: JSON.stringify({
         query: `query {
-			allCommunities {
+			allCommunities(filter: {creatorSlug: {eq: ${githubUser}}}) {
 			  id
 			  title
 			  imageUrl
