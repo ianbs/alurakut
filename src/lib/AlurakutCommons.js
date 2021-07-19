@@ -200,7 +200,7 @@ export function AlurakutProfileSidebarMenuDefault() {
           <img src={`${BASE_URL}/icons/user.svg`} />
           Perfil
         </a>
-        <a href="/">
+        <a href="/scrapbook">
           <img src={`${BASE_URL}/icons/book.svg`} />
           Recados
         </a>

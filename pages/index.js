@@ -6,34 +6,12 @@ import jwt from "jsonwebtoken";
 import MainGrid from "../src/components/MainGrid";
 import Box from "../src/components/Box";
 import { ProfileRelationsBox } from "../src/components/ProfileRelations";
+import ProfileSideBar from "../src/components/ProfileSideBar";
 import {
   AlurakutMenu,
-  AlurakutProfileSidebarMenuDefault,
   OrkutNostalgicIconSet,
 } from "../src/lib/AlurakutCommons";
 import { useRouter } from "next/router";
-
-function ProfileSideBar(propriedades) {
-  return (
-    <Box as="aside">
-      <img
-        style={{ borderRadius: "8px" }}
-        src={`https://github.com/${propriedades.githubUser}.png`}
-      />
-      <hr />
-      <p>
-        <a
-          className="boxLink"
-          href={`https://github.com/${propriedades.githubUser}`}
-        >
-          @{propriedades.githubUser}
-        </a>
-      </p>
-      <hr />
-      <AlurakutProfileSidebarMenuDefault />
-    </Box>
-  );
-}
 
 export default function Home(props) {
   const githubUser = props.githubUser;
