@@ -1,29 +1,29 @@
-import styled from "styled-components";
-import { useEffect, useState } from "react";
-import nookies from "nookies";
-import jwt from "jsonwebtoken";
-
-import MainGrid from "../src/components/MainGrid";
-import Box from "../src/components/Box";
-import { ProfileRelationsBox } from "../src/components/ProfileRelations";
-import ProfileSideBar from "../src/components/ProfileSideBar";
+import { useRouter } from "next/router";
+import { useState, useEffect } from "react";
+import MainGrid from "../../src/components/MainGrid";
+import Box from "../../src/components/Box";
+import { ProfileRelationsBox } from "../../src/components/ProfileRelations";
+import ProfileSideBar from "../../src/components/ProfileSideBar";
 import {
 	AlurakutMenu,
 	OrkutNostalgicIconSet,
-} from "../src/lib/AlurakutCommons";
-import { useRouter } from "next/router";
+} from "../../src/lib/AlurakutCommons";
 
-export default function Home(props) {
-	const githubUser = props.githubUser;
+export default function UserPage() {
+	const router = useRouter();
+	const { username } = router.query;
+
 	const [peoples, setPeoples] = useState([]);
 	const [comunidades, setComunidades] = useState([]);
 
 	useEffect(() => {
-		fetch(`https://api.github.com/users/${githubUser}/followers`)
+		// console.log(username);
+		fetch(`https://api.github.com/users/${username}/followers`)
 			.then((results) => {
 				return results.json();
 			})
 			.then((data) => {
+				console.log(data);
 				setPeoples(data);
 			});
 
@@ -36,7 +36,7 @@ export default function Home(props) {
 			},
 			body: JSON.stringify({
 				query: `query {
-			allCommunities(filter: {creatorSlug: {eq: ${githubUser}}}) {
+			allCommunities(filter: {creatorSlug: {eq: ${username}}}) {
 			  id
 			  title
 			  imageUrl
@@ -47,50 +47,25 @@ export default function Home(props) {
 		})
 			.then((resp) => resp.json())
 			.then((data) => {
+				console.log(data.data);
 				setComunidades(data.data.allCommunities);
 			});
-	}, []);
-
-	const handleCriaComunidade = (e) => {
-		e.preventDefault();
-		const dados = new FormData(e.target);
-		// console.log(dados.get("title"));
-		// console.log(dados.get("image"));
-		const comunidade = {
-			title: dados.get("comunidade"),
-			imageUrl: dados.get("image"),
-			creatorSlug: githubUser,
-		};
-
-		fetch("/api/communities", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(comunidade),
-		}).then(async (response) => {
-			const data = await response.json();
-			console.log(data);
-			setComunidades([...comunidades, data.registro]);
-		});
-
-		//
-	};
+	}, [username]);
 
 	return (
 		<>
-			<AlurakutMenu githubUser={githubUser} />
+			<AlurakutMenu githubUser={username} />
 			<MainGrid>
 				<div className="profile" style={{ gridArea: "profile" }}>
-					<ProfileSideBar githubUser={githubUser} />
+					<ProfileSideBar githubUser={username} />
 				</div>
 				<div className="welcome" style={{ gridArea: "welcome" }}>
 					<Box>
-						<h1 className="title">Bem vindo(a)</h1>
+						<h3 className="title">@{username}</h3>
 						<OrkutNostalgicIconSet confiavel={3} legal={2} sexy={1} />
 						{/*Passando PROPS para o component para definir a quantidade*/}
 					</Box>
-					<Box>
+					{/* <Box>
 						<h3 className="subTitle">O que voce deseja fazer?</h3>
 						<form onSubmit={handleCriaComunidade}>
 							<div>
@@ -111,7 +86,7 @@ export default function Home(props) {
 							</div>
 							<button>Criar comunidade</button>
 						</form>
-					</Box>
+					</Box> */}
 				</div>
 				<div className="relations" style={{ gridArea: "relations" }}>
 					<ProfileRelationsBox
@@ -126,34 +101,4 @@ export default function Home(props) {
 			</MainGrid>
 		</>
 	);
-}
-
-export async function getServerSideProps(context) {
-	const cookies = nookies.get(context);
-	const token = cookies.USER_TOKEN;
-
-	const { isAuthenticated } = await fetch(
-		"https://alurakut.vercel.app/api/auth",
-		{
-			headers: {
-				Authorization: token,
-			},
-		}
-	).then((resp) => resp.json());
-
-	if (!isAuthenticated) {
-		return {
-			redirect: {
-				destination: "/login",
-				permanent: false,
-			},
-		};
-	}
-
-	const { githubUser } = jwt.decode(token);
-	return {
-		props: {
-			githubUser,
-		},
-	};
 }
